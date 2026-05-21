@@ -1,0 +1,203 @@
+import os
+
+# ==============================
+# CRIAÇÃO DO BANCO DE DADOS
+# ==============================
+
+nome_banco = input("Informe o nome do banco de dados: ")
+
+arquivo_banco = f"{nome_banco}.txt"
+
+# Cria o arquivo se não existir
+if not os.path.exists(arquivo_banco):
+    open(arquivo_banco, "w").close()
+
+print(f"\nBanco de dados '{nome_banco}' criado com sucesso!")
+
+# ==============================
+# MENU PRINCIPAL
+# ==============================
+
+while True:
+
+    print("\n===== MENU =====")
+    print("1 - Criar tabela")
+    print("2 - Alterar registro")
+    print("3 - Excluir registro")
+    print("4 - Localizar registro")
+    print("5 - Mostrar tabela")
+    print("0 - Sair")
+
+    opcao = input("Escolha uma opção: ")
+
+    # ==============================
+    # CRIAR TABELA / CADASTRO
+    # ==============================
+
+    if opcao == "1":
+
+        id_registro = input("Digite o ID: ")
+        nome = input("Digite o nome: ")
+        telefone = input("Digite o telefone: ")
+
+        with open(arquivo_banco, "a") as arquivo:
+            arquivo.write(f"{id_registro};{nome};{telefone}\n")
+
+        print("Registro cadastrado com sucesso!")
+
+    # ==============================
+    # ALTERAR
+    # ==============================
+
+    elif opcao == "2":
+
+        busca = input("Digite o ID para alterar: ")
+
+        novas_linhas = []
+        encontrado = False
+
+        with open(arquivo_banco, "r") as arquivo:
+
+            linhas = arquivo.readlines()
+
+            for linha in linhas:
+
+                dados = linha.strip().split(";")
+
+                if len(dados) == 3:
+
+                    id_registro, nome, telefone = dados
+
+                    if id_registro == busca:
+
+                        encontrado = True
+
+                        print("Registro encontrado!")
+
+                        nome = input("Novo nome: ")
+                        telefone = input("Novo telefone: ")
+
+                    novas_linhas.append(
+                        f"{id_registro};{nome};{telefone}\n"
+                    )
+
+        with open(arquivo_banco, "w") as arquivo:
+            arquivo.writelines(novas_linhas)
+
+        if encontrado:
+            print("Registro alterado com sucesso!")
+        else:
+            print("Registro não encontrado.")
+
+    # ==============================
+    # EXCLUIR
+    # ==============================
+
+    elif opcao == "3":
+
+        busca = input("Digite o ID para excluir: ")
+
+        novas_linhas = []
+        encontrado = False
+
+        with open(arquivo_banco, "r") as arquivo:
+
+            linhas = arquivo.readlines()
+
+            for linha in linhas:
+
+                dados = linha.strip().split(";")
+
+                if len(dados) == 3:
+
+                    id_registro, nome, telefone = dados
+
+                    if id_registro != busca:
+                        novas_linhas.append(linha)
+                    else:
+                        encontrado = True
+
+        with open(arquivo_banco, "w") as arquivo:
+            arquivo.writelines(novas_linhas)
+
+        if encontrado:
+            print("Registro excluído com sucesso!")
+        else:
+            print("Registro não encontrado.")
+
+    # ==============================
+    # LOCALIZAR
+    # ==============================
+
+    elif opcao == "4":
+
+        busca = input("Digite o ID para localizar: ")
+
+        encontrado = False
+
+        with open(arquivo_banco, "r") as arquivo:
+
+            for linha in arquivo:
+
+                dados = linha.strip().split(";")
+
+                if len(dados) == 3:
+
+                    id_registro, nome, telefone = dados
+
+                    if id_registro == busca:
+
+                        encontrado = True
+
+                        print(f"""
+ID: {id_registro}
+Nome: {nome}
+Telefone: {telefone}
+""")
+
+        if not encontrado:
+            print("Registro não encontrado.")
+
+    # ==============================
+    # MOSTRAR TABELA
+    # ==============================
+
+    elif opcao == "5":
+
+        print(f"\n===== TABELA: {nome_banco.upper()} =====")
+
+        with open(arquivo_banco, "r") as arquivo:
+
+            linhas = arquivo.readlines()
+
+            if len(linhas) == 0:
+                print("Tabela vazia.")
+
+            else:
+
+                for linha in linhas:
+
+                    dados = linha.strip().split(";")
+
+                    if len(dados) == 3:
+
+                        id_registro, nome, telefone = dados
+
+                        print(f"""
+ID: {id_registro}
+Nome: {nome}
+Telefone: {telefone}
+-------------------------
+""")
+
+    # ==============================
+    # SAIR
+    # ==============================
+
+    elif opcao == "0":
+
+        print("Sistema encerrado.")
+        break
+
+    else:
+        print("Opção inválida.")
